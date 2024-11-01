@@ -6,9 +6,10 @@ function App() {
 
   return (
     <div className="canvas-container">
-      <Canvas>
+      <Canvas className='canvas'>
         <ambientLight intensity={0.1} />
         <directionalLight color="red" position={[0, 0, 5]} />
+        <Box/>
         <Box/>
       </Canvas>
     </div>

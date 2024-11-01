@@ -16,7 +16,7 @@ export default function Box(props) {
     return (
         <mesh {...props} ref={boxRef}>
             <boxGeometry />
-            <meshBasicMaterial color={0x00ff00} wireframe />
+            <meshBasicMaterial color={0x00ff00} />
         </mesh>
     )
 }

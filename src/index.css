@@ -1,5 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
     background-color: black;
+    font-family: "Poppins", serif;;
+    color: wheat;
 }
 
 .canvas-container{
@@ -11,4 +17,19 @@
 
 .canvas{
 
+}
+
+.page{
+    margin-top: 40px;
+}
+
+.header{
+    background-color: #005141;
+    position:absolute;
+    top:0;
+    left: 0;
+    padding:5px;
+    color:wheat;
+    z-index: 10;
+    width: 100vw
 }

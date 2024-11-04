@@ -10,10 +10,9 @@ export default function Box(props) {
     const {properties} = (props)
 
     function updatePosition() {
-        boxRef.current.position.x = properties.position.x
-        boxRef.current.position.y = properties.position.y
+        boxRef.current.position.x = properties.position.x,
+        boxRef.current.position.y = properties.position.y,
         boxRef.current.position.z = properties.position.z
-
     }
 
     useFrame((_, delta) => {

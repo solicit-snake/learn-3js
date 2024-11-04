@@ -31,7 +31,7 @@ const Slider = ({
           value={value}
           step={step}
           onChange={(e) => handleChange(Number(e.target.value))}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer input-slider"
         />
         
         <div 

@@ -8,6 +8,11 @@
     color: wheat;
 }
 
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .canvas-container{
     /* width: 200px;
     height: 200px; */
@@ -46,22 +51,40 @@
     width: 1rem;    
  }
 
+.controls{
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .control-box{
     background-color: #005141;
-    width: 100%;
     display: flex;
+    flex-wrap: wrap;
+
+    user-select: none;
+    touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .control-box *{
     background-color: inherit;
 }
-.control-box h3{
+.control-box h4{
     margin: 5px 0px 5px 0px;
+}
+
+.control-box h3 {
+    margin: 4px 4px;
+    width: 100%;
 }
 
 .control-box-property{
     width: fit-content;
     margin: 5px;
+    font-size: 14px;
+    flex: 1;
 }
 
 .page{

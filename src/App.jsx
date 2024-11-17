@@ -4,30 +4,73 @@ import Header from './components/Header'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
 import ControlBox  from './components/ControlBox'
+import LightWithHelper from './components/LightWithHelper'
 
 function App() {
+  const [currentlySelectedObject, setCurrentlySelectedObject] = useState('');
 
-  const [box1Properties, setBox1Properties] = useState({
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { x: 1.9, y: 3.1, z: 0.3 },
-    size: { x: 1, y: 1, z: 1 },
-    color: "#a3c2f7",
-    title: "box 1"
-  })
-
-  const [box2Properties, setBox2Properties] = useState({
-    position: { x: 0, y: -2, z: 0 },
-    rotation: { x: 0, y: 0, z: 0 },
-    size: { x: 5, y: .5, z: 3 },
-    color: "#abeb34",
-    title: 'box 2'
-  })
+  // Store all 3D objects in a single array with unique IDs
+  const [objects, setObjects] = useState([
+    {
+      id: '1',
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 1.9, y: 3.1, z: 0.3 },
+      size: { x: 1, y: 1, z: 1 },
+      color: "#a3c2f7",
+      title: "box 1"
+    },
+    {
+      id: '2',
+      position: { x: 0, y: -2, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      size: { x: 5, y: .2, z: 3 },
+      color: "#abeb34",
+      title: 'box 2'
+    }
+  ]);
 
   const [cameraProperties, setCameraProperties] = useState({
-    position: { x: 0, y: 0, z: 5},
+    position: { x: 0, y: 0, z: 7},
     rotation: { x: 0, y: 0, z: 0 },
     title: 'camera'
   })
+
+  const [lightProperties, setLightProperties] = useState({
+    position: { x: 1, y: 2, z: 0 },
+    color: "yellow",
+    intensity: 0.8,
+    radius: 0,
+    title: 'main directional light'
+  })
+
+  // Function to add a new object, 
+  //TODO:: obviously it will take title and color as arguments
+  const addObject = () => {
+    const newObject = {
+      id: Date.now().toString(),
+      position: { x: 0, y: 0, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+      size: { x: 1, y: 1, z: 1 },
+      color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
+      title: `box ${objects.length + 1}`
+    };
+    setObjects([...objects, newObject]);
+  }
+
+  // Function to remove an object by ID
+  const removeObject = (id) => {
+    setObjects(objects.filter(obj => obj.id !== id));
+  }
+
+  // Function to update object properties
+  const updateObjectProperties = (id, newProperties) => {
+    setObjects(objects.map(obj => 
+      obj.id === id ? { ...obj, ...newProperties } : obj
+    ));
+  };
+
+
+  let [controllableObjects, setControllableObjects] = useState();
 
   return (
     <>
@@ -47,19 +90,7 @@ function App() {
               far={1000}
             />
 
-            {/* Main key light */}
-            <directionalLight 
-              position={[5, 8, 3]}
-              intensity={0.8}
-              castShadow
-              shadow-mapSize-width={2048}
-              shadow-mapSize-height={2048}
-              shadow-camera-left={-10}
-              shadow-camera-right={10}
-              shadow-camera-top={10}
-              shadow-camera-bottom={-10}
-              color="white"
-            />
+            <LightWithHelper properties={lightProperties} />
             
             {/* Fill light */}
             <directionalLight 
@@ -67,25 +98,44 @@ function App() {
               intensity={0.3}
               color="#b1e1ff"
             />
-            
-            {/* Rim light for depth */}
-            <spotLight
-              position={[0, 5, -5]}
-              intensity={0.5}
-              color="#ffd1b1"
-              angle={0.5}
-              castShadow
-              shadow-mapSize-width={2048}
-              shadow-mapSize-height={2048}
-            />
-            <Box properties={box1Properties} />
-            <Box properties={box2Properties}></Box>
+
+            {/* Render all 3D objects */}
+            {objects.map(obj => (
+              <Box 
+                key={obj.id}
+                properties={obj}
+              />
+            ))}
+            {/* <Box properties={box1Properties} />
+            <Box properties={box2Properties}></Box> */}
           </Canvas>
         </div>
         <div className="controls">
-          <ControlBox properties={box1Properties} setProperties={setBox1Properties}/>
-          <ControlBox properties={cameraProperties} setProperties={setCameraProperties}/>
+          <button 
+            onClick={addObject}
+            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Add New Box
+          </button>
 
+          <ControlBox properties={cameraProperties} setProperties={setCameraProperties}/>
+          <ControlBox properties={lightProperties} setProperties={setLightProperties}/>
+
+          {/* Dynamic control boxes for 3D objects */}
+          {objects.map(obj => (
+            <div key={obj.id} className="relative">
+              <ControlBox
+                properties={obj}
+                setProperties={(newProps) => updateObjectProperties(obj.id, newProps)}
+              />
+              <button
+                onClick={() => removeObject(obj.id)}
+                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </>

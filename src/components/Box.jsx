@@ -44,6 +44,9 @@ export default function Box(props) {
         <mesh ref={boxRef}
             castShadow 
             receiveShadow
+            onClick={()=> {
+                console.log('clicked', properties.title);
+            }}
         >
             {/* args = dimensions = width, height, depth */}
             <boxGeometry args={[properties.size.x, properties.size.y, properties.size.z]} castShadow  receiveShadow />

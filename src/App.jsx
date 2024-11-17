@@ -67,10 +67,7 @@ function App() {
     setObjects(objects.map(obj => 
       obj.id === id ? { ...obj, ...newProperties } : obj
     ));
-  };
-
-
-  let [controllableObjects, setControllableObjects] = useState();
+  }
 
   return (
     <>
@@ -104,6 +101,7 @@ function App() {
               <Box 
                 key={obj.id}
                 properties={obj}
+                onClick={() => setCurrentlySelectedObject(obj.id)}
               />
             ))}
             {/* <Box properties={box1Properties} />
@@ -123,6 +121,7 @@ function App() {
 
           {/* Dynamic control boxes for 3D objects */}
           {objects.map(obj => (
+            obj.id === currentlySelectedObject ? 
             <div key={obj.id} className="relative">
               <ControlBox
                 properties={obj}
@@ -134,7 +133,7 @@ function App() {
               >
                 Remove
               </button>
-            </div>
+            </div> : null
           ))}
         </div>
       </div>

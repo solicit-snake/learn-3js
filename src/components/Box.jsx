@@ -7,7 +7,7 @@ import React from 'react'
 
 export default function Box(props) {
     const boxRef = useRef();
-    const {properties} = (props)
+    const {properties, onClick} = (props)
 
     //if properties doesn't exist, give it a default value
     if (!properties) 
@@ -46,6 +46,7 @@ export default function Box(props) {
             receiveShadow
             onClick={()=> {
                 console.log('clicked', properties.title);
+                onClick()
             }}
         >
             {/* args = dimensions = width, height, depth */}

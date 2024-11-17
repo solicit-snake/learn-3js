@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { useState, useImperativeHandle } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { BoxGeometry } from 'three'
 import { useRef } from 'react'
 
@@ -7,7 +7,7 @@ import React from 'react'
 
 export default function Box(props) {
     const boxRef = useRef();
-    const {properties, onClick} = (props)
+    const {properties, onClick } = (props)
 
     //if properties doesn't exist, give it a default value
     if (!properties) 
@@ -44,10 +44,7 @@ export default function Box(props) {
         <mesh ref={boxRef}
             castShadow 
             receiveShadow
-            onClick={()=> {
-                console.log('clicked', properties.title);
-                onClick()
-            }}
+            onClick={onClick}
         >
             {/* args = dimensions = width, height, depth */}
             <boxGeometry args={[properties.size.x, properties.size.y, properties.size.z]} castShadow  receiveShadow />

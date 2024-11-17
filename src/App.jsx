@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Box from './components/Box'
 import Header from './components/Header'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { PerspectiveCamera } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import ControlBox  from './components/ControlBox'
 import LightWithHelper from './components/LightWithHelper'
+import { EffectComposer, Outline, Selection, Select} from '@react-three/postprocessing'
 
 function App() {
-  const [currentlySelectedObject, setCurrentlySelectedObject] = useState('');
+  const [selectedObjectId, setSelectedObjectId] = useState('');
 
   // Store all 3D objects in a single array with unique IDs
   const [objects, setObjects] = useState([
@@ -60,6 +61,9 @@ function App() {
   // Function to remove an object by ID
   const removeObject = (id) => {
     setObjects(objects.filter(obj => obj.id !== id));
+    if (selectedObjectId === id) {
+      setSelectedObjectId('');
+    }
   }
 
   // Function to update object properties
@@ -69,43 +73,62 @@ function App() {
     ));
   }
 
+  // Function to clear the selected object when the void is clicked
+  const handleVoidClick = () => { 
+    setSelectedObjectId('')
+  }
+
   return (
     <>
       <Header/>
       <div className='page'>
         <div className="canvas-container">
-          <Canvas className='canvas' shadows camera={{manual: true}}>
-            {/* Ambient light for overall soft illumination */}
-            <ambientLight intensity={0.4} />
-            
-            <PerspectiveCamera
-              makeDefault  // Makes this the active camera
-              position={[cameraProperties.position.x, cameraProperties.position.y, cameraProperties.position.z]}
-              rotation={[cameraProperties.rotation.x, cameraProperties.rotation.y, cameraProperties.rotation.z]}
-              fov={75}
-              near={0.1}
-              far={1000}
-            />
+          <Canvas className='canvas' shadows camera={{manual: true}} onPointerMissed={() => handleVoidClick()}>
 
-            <LightWithHelper properties={lightProperties} />
-            
-            {/* Fill light */}
-            <directionalLight 
-              position={[-5, 3, -5]}
-              intensity={0.3}
-              color="#b1e1ff"
-            />
-
-            {/* Render all 3D objects */}
-            {objects.map(obj => (
-              <Box 
-                key={obj.id}
-                properties={obj}
-                onClick={() => setCurrentlySelectedObject(obj.id)}
+            {/* adds an outline to the selected object */}
+            <Selection>
+              {/* Ambient light for overall soft illumination */}
+              <ambientLight intensity={0.4} />
+              
+              <PerspectiveCamera
+                makeDefault  // Makes this the active camera
+                position={[cameraProperties.position.x, cameraProperties.position.y, cameraProperties.position.z]}
+                rotation={[cameraProperties.rotation.x, cameraProperties.rotation.y, cameraProperties.rotation.z]}
+                fov={75}
+                near={0.1}
+                far={1000}
               />
-            ))}
-            {/* <Box properties={box1Properties} />
-            <Box properties={box2Properties}></Box> */}
+
+              <LightWithHelper properties={lightProperties} />
+              
+              {/* Fill light */}
+              <directionalLight 
+                position={[-5, 3, -5]}
+                intensity={0.3}
+                color="#b1e1ff"
+              />
+              <OrbitControls />
+
+              {/* Render all 3D objects */}
+              {objects.map(obj => (
+                <Select enabled={obj.id === selectedObjectId}>
+                  <Box 
+                    key={obj.id}
+                    properties={obj}
+                    onClick={() => setSelectedObjectId(obj.id)}
+                  />
+                </Select>
+                
+              ))}
+            <EffectComposer multisampling={8} autoClear={false}> 
+              <Outline 
+                    blur
+                    visibleEdgeColor={0xffffff}
+                    edgeStrength={10}
+                    width={1024}
+                  />
+            </EffectComposer>
+          </Selection>
           </Canvas>
         </div>
         <div className="controls">
@@ -121,7 +144,7 @@ function App() {
 
           {/* Dynamic control boxes for 3D objects */}
           {objects.map(obj => (
-            obj.id === currentlySelectedObject ? 
+            obj.id === selectedObjectId ? 
             <div key={obj.id} className="relative">
               <ControlBox
                 properties={obj}

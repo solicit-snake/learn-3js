@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, Suspense, useEffect} from 'react'
 import Box from './components/Box'
 import Header from './components/Header'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei'
 import ControlBox  from './components/ControlBox'
 import LightWithHelper from './components/LightWithHelper'
 import { EffectComposer, Outline, Selection, Select} from '@react-three/postprocessing'
@@ -29,6 +29,8 @@ function App() {
       title: 'box 2'
     }
   ]);
+
+ 
 
   const [cameraProperties, setCameraProperties] = useState({
     position: { x: 0, y: 0, z: 7},
@@ -78,6 +80,19 @@ function App() {
     setSelectedObjectId('')
   }
 
+  //loads 3d scene
+  const {scene} = useGLTF('/3DAssets/Environments/club_atomic/scene.gltf');
+
+  //makes sure the environment scene's child isn't off in woop woop position wise
+  useEffect(() => {
+    if (scene && scene.children[0]) {
+        // Set the first child's position to origin
+        scene.children[0].position.set(0, 0, 0);
+        // Or if you need specific coordinates:
+        // scene.children[0].position.set(x, y, z);
+    }
+}, [scene]);
+
   return (
     <>
       <Header/>
@@ -99,6 +114,16 @@ function App() {
                 far={1000}
               />
 
+              <Suspense fallback={null}>
+                    <primitive 
+                      object={scene}  
+                      position={[0, 0, 0]} 
+                      scale={1}
+                    />  
+                <gridHelper args={[10, 10]} />
+              </Suspense>
+              
+
               <LightWithHelper properties={lightProperties} />
               
               {/* Fill light */}
@@ -107,7 +132,7 @@ function App() {
                 intensity={0.3}
                 color="#b1e1ff"
               />
-              <OrbitControls />
+              <OrbitControls zoomSpeed={0.3} />
 
               {/* Render all 3D objects */}
               {objects.map(obj => (
@@ -145,8 +170,9 @@ function App() {
           {/* Dynamic control boxes for 3D objects */}
           {objects.map(obj => (
             obj.id === selectedObjectId ? 
-            <div key={obj.id} className="relative">
+            <div key={obj.id}>
               <ControlBox
+                key={obj.id}
                 properties={obj}
                 setProperties={(newProps) => updateObjectProperties(obj.id, newProps)}
               />

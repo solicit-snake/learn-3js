@@ -1,0 +1,11 @@
+Model Information:
+* title:	Club Atomic: Where the holograms go.
+* source:	https://sketchfab.com/3d-models/club-atomic-where-the-holograms-go-3675156e5aa942269bbe6ef85125136b
+* author:	tl0615 (https://sketchfab.com/tl0615)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Club Atomic: Where the holograms go." (https://sketchfab.com/3d-models/club-atomic-where-the-holograms-go-3675156e5aa942269bbe6ef85125136b) by tl0615 (https://sketchfab.com/tl0615) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

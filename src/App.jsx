@@ -83,13 +83,41 @@ function App() {
   //loads 3d scene
   const {scene} = useGLTF('/3DAssets/Environments/club_atomic/scene.gltf');
 
-  //makes sure the environment scene's child isn't off in woop woop position wise
+  console.log(scene)
+
+  //makes sure the environment scene object children mesh has shadows :)
   useEffect(() => {
-    if (scene && scene.children[0]) {
-        // Set the first child's position to origin
-        scene.children[0].position.set(0, 0, 0);
-        // Or if you need specific coordinates:
-        // scene.children[0].position.set(x, y, z);
+    if (scene) {
+        // Recursive function to apply shadow properties to all meshes
+        const applyShadowProperties = (object) => {
+            // Check if the object is a mesh
+            if (object.isMesh) {
+                object.castShadow = true;
+                object.receiveShadow = true;
+                
+                // Special handling for floor/ground objects
+                if (object.name.toLowerCase().includes('floor') || 
+                    object.name.toLowerCase().includes('ground')) {
+                    object.castShadow = false;
+                    object.receiveShadow = true;
+                    
+                    // Ensure material properties for shadow blocking
+                    if (object.material) {
+                        object.material.transparent = false;
+                        object.material.opacity = 1;
+                        object.material.shadowSide = THREE.FrontSide;
+                    }
+                }
+            }
+            
+            // Recursively apply to children
+            if (object.children && object.children.length > 0) {
+                object.children.forEach(applyShadowProperties);
+            }
+        };
+
+        // Start the recursive application from the root scene
+        applyShadowProperties(scene);
     }
 }, [scene]);
 
@@ -116,11 +144,12 @@ function App() {
 
               <Suspense fallback={null}>
                     <primitive 
-                      object={scene}  
+                      object={scene.children[0]}  
                       position={[0, 0, 0]} 
-                      scale={1}
-                    />  
-                <gridHelper args={[10, 10]} />
+                      scale={0.02}
+                      castShadow 
+                      receiveShadow
+                    />
               </Suspense>
               
 
